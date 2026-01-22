@@ -613,3 +613,65 @@ html.dark-theme .input-wrapper .custom-tooltip {
   background: #22272B !important;
   color: #B6C2CF !important;
 }
+
+/* Quick Links Display (in popup) */
+.quick-links-display {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #dee2e6;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.quick-links-display .quick-link-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: #495057;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.15s;
+}
+
+.quick-links-display .quick-link-item:hover {
+  background-color: #f0f7ff;
+}
+
+.quick-links-display .quick-link-label {
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.quick-links-display .quick-link-text {
+  color: #0052cc;
+  text-decoration: underline;
+}
+
+/* Dark theme for quick links */
+.dark-theme .quick-links-display,
+html.dark-theme .quick-links-display {
+  border-top-color: #3d3d5c;
+}
+
+.dark-theme .quick-links-display .quick-link-item,
+html.dark-theme .quick-links-display .quick-link-item {
+  color: #c0c0c0;
+}
+
+.dark-theme .quick-links-display .quick-link-item:hover,
+html.dark-theme .quick-links-display .quick-link-item:hover {
+  background-color: #2d3d5c;
+}
+
+.dark-theme .quick-links-display .quick-link-label,
+html.dark-theme .quick-links-display .quick-link-label {
+  color: #a0a0a0;
+}
+
+.dark-theme .quick-links-display .quick-link-text,
+html.dark-theme .quick-links-display .quick-link-text {
+  color: #5c9eff;
+}

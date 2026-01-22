@@ -69,6 +69,37 @@
       pointer-events: none;
     }
 
+    /* Quick Links Grid */
+    .quick-link-item {
+      display: grid;
+      grid-template-columns: 1fr 2fr auto;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .quick-link-item input {
+      font-size: 0.9rem;
+    }
+    .quick-link-item .remove-link-btn {
+      background: none;
+      border: none;
+      color: #dc3545;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+    .quick-link-item .remove-link-btn:hover {
+      color: #a71d2a;
+    }
+    #quick-links-container:empty::before {
+      content: 'No quick links added yet.';
+      color: #6c757d;
+      font-style: italic;
+      display: block;
+      margin-bottom: 8px;
+    }
+
     /* Dark Theme */
     body.dark-theme,
     html.dark-theme body {
@@ -250,18 +281,31 @@
     <div class="preview-label">Preview:</div>
     <div class="preview" id="preview">GOAT-8074-example-branch-name</div>
 
-    <div class="section-title">Custom Branch Settings</div>
-    <div class="form-text mb-3">Settings for custom branches (when not using JIRA)</div>
+    <div class="section-title">Display Options</div>
+    <div class="form-text mb-3">Customize what's shown in the popup</div>
+
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hide-git-command">
+        <label class="form-check-label" for="hide-git-command">
+          <strong>Hide Git Command field</strong>
+        </label>
+      </div>
+      <div class="form-text ms-4">Only show the branch name, hide the git checkout command</div>
+    </div>
 
     <div class="mb-3">
       <div class="form-check">
         <input class="form-check-input" type="checkbox" id="hide-custom-section">
         <label class="form-check-label" for="hide-custom-section">
-          <strong>Hide custom branch section in popup</strong>
+          <strong>Hide custom branch section</strong>
         </label>
       </div>
-      <div class="form-text ms-4">Hide the custom branch section when a JIRA story is detected</div>
+      <div class="form-text ms-4">Hide the custom branch section in popup</div>
     </div>
+
+    <div class="section-title">Custom Branch Settings</div>
+    <div class="form-text mb-3">Settings for custom branches (when not using JIRA)</div>
 
     <div class="mb-3">
       <label for="custom-branch-prefix" class="form-label">Custom Branch Prefix</label>
@@ -286,6 +330,17 @@
       <input type="text" class="form-control" id="jira-assignee-id" placeholder="e.g., 61855ee5a989710070fa789a">
       <div class="form-text">Your JIRA assignee ID for "My Stories" button (find it in the board URL when filtering by yourself)</div>
     </div>
+
+    <div class="section-title">Extra Quick Links</div>
+    <div class="form-text mb-3">Add custom links that appear below the story. Use <code>&lt;branch&gt;</code> as placeholder for the branch name.</div>
+
+    <div id="quick-links-container">
+      <!-- Quick links will be added here dynamically -->
+    </div>
+
+    <button type="button" class="btn btn-outline-secondary btn-sm mb-3" id="add-quick-link-btn">
+      + Add Link
+    </button>
 
     <div class="mt-4">
       <button type="submit" class="btn btn-primary">Save</button>

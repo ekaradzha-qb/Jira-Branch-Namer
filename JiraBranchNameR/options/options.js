@@ -4,6 +4,7 @@ const prefixAfterInput = document.getElementById('prefix-after');
 const replacePrefixCheckbox = document.getElementById('replace-prefix');
 const customPrefixInput = document.getElementById('custom-prefix');
 const customBranchPrefixInput = document.getElementById('custom-branch-prefix');
+const hideGitCommandCheckbox = document.getElementById('hide-git-command');
 const hideCustomSectionCheckbox = document.getElementById('hide-custom-section');
 const jiraBoardUrlInput = document.getElementById('jira-board-url');
 const jiraAssigneeIdInput = document.getElementById('jira-assignee-id');
@@ -13,6 +14,11 @@ const previewEl = document.getElementById('preview');
 const customPreviewEl = document.getElementById('custom-preview');
 const savedMessage = document.getElementById('saved-message');
 const form = document.getElementById('options-form');
+const quickLinksContainer = document.getElementById('quick-links-container');
+const addQuickLinkBtn = document.getElementById('add-quick-link-btn');
+
+// Quick links array
+let quickLinks = [];
 
 /**
  * Updates field visibility based on replace checkbox
@@ -52,6 +58,82 @@ function updateCustomPreview() {
 }
 
 /**
+ * Creates a quick link row element
+ * @param {Object} link - Link object with label and url
+ * @param {number} index - Index of the link
+ * @returns {HTMLElement} The quick link row element
+ */
+function createQuickLinkRow(link = { label: '', url: '' }, index) {
+  const row = document.createElement('div');
+  row.className = 'quick-link-item';
+  row.dataset.index = index;
+
+  const labelInput = document.createElement('input');
+  labelInput.type = 'text';
+  labelInput.className = 'form-control';
+  labelInput.placeholder = 'Label';
+  labelInput.value = link.label;
+  labelInput.addEventListener('input', () => updateQuickLinksFromUI());
+
+  const urlInput = document.createElement('input');
+  urlInput.type = 'text';
+  urlInput.className = 'form-control';
+  urlInput.placeholder = 'URL with <branch>';
+  urlInput.value = link.url;
+  urlInput.addEventListener('input', () => updateQuickLinksFromUI());
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'remove-link-btn';
+  removeBtn.innerHTML = '&times;';
+  removeBtn.title = 'Remove link';
+  removeBtn.addEventListener('click', () => {
+    row.remove();
+    updateQuickLinksFromUI();
+  });
+
+  row.appendChild(labelInput);
+  row.appendChild(urlInput);
+  row.appendChild(removeBtn);
+
+  return row;
+}
+
+/**
+ * Renders quick links from the array
+ */
+function renderQuickLinks() {
+  quickLinksContainer.innerHTML = '';
+  quickLinks.forEach((link, index) => {
+    quickLinksContainer.appendChild(createQuickLinkRow(link, index));
+  });
+}
+
+/**
+ * Updates the quickLinks array from UI elements
+ */
+function updateQuickLinksFromUI() {
+  quickLinks = [];
+  const rows = quickLinksContainer.querySelectorAll('.quick-link-item');
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const label = inputs[0].value.trim();
+    const url = inputs[1].value.trim();
+    if (label || url) {
+      quickLinks.push({ label, url });
+    }
+  });
+}
+
+/**
+ * Adds a new quick link row
+ */
+function addQuickLink() {
+  const index = quickLinksContainer.children.length;
+  quickLinksContainer.appendChild(createQuickLinkRow({ label: '', url: '' }, index));
+}
+
+/**
  * Loads saved options from Chrome storage
  */
 async function loadOptions() {
@@ -62,19 +144,27 @@ async function loadOptions() {
       'replacePrefix',
       'customPrefix',
       'customBranchPrefix',
+      'hideGitCommand',
       'hideCustomSection',
       'jiraBoardUrl',
       'jiraAssigneeId',
-      'darkTheme'
+      'darkTheme',
+      'quickLinks'
     ]);
     prefixBeforeInput.value = result.prefixBefore || '';
     prefixAfterInput.value = result.prefixAfter || '';
     replacePrefixCheckbox.checked = result.replacePrefix || false;
     customPrefixInput.value = result.customPrefix || '';
     customBranchPrefixInput.value = result.customBranchPrefix || 'GOAT-0000';
+    hideGitCommandCheckbox.checked = result.hideGitCommand || false;
     hideCustomSectionCheckbox.checked = result.hideCustomSection || false;
     jiraBoardUrlInput.value = result.jiraBoardUrl || '';
     jiraAssigneeIdInput.value = result.jiraAssigneeId || '';
+
+    // Load quick links
+    quickLinks = result.quickLinks || [];
+    renderQuickLinks();
+
     updateFieldVisibility();
     updatePreview();
     updateCustomPreview();
@@ -100,6 +190,9 @@ async function loadOptions() {
 async function saveOptions(e) {
   e.preventDefault();
 
+  // Update quickLinks from UI before saving
+  updateQuickLinksFromUI();
+
   try {
     await chrome.storage.sync.set({
       prefixBefore: prefixBeforeInput.value,
@@ -107,9 +200,11 @@ async function saveOptions(e) {
       replacePrefix: replacePrefixCheckbox.checked,
       customPrefix: customPrefixInput.value,
       customBranchPrefix: customBranchPrefixInput.value || 'GOAT-0000',
+      hideGitCommand: hideGitCommandCheckbox.checked,
       hideCustomSection: hideCustomSectionCheckbox.checked,
       jiraBoardUrl: jiraBoardUrlInput.value,
-      jiraAssigneeId: jiraAssigneeIdInput.value
+      jiraAssigneeId: jiraAssigneeIdInput.value,
+      quickLinks: quickLinks
     });
 
     // Show saved message
@@ -132,6 +227,7 @@ replacePrefixCheckbox.addEventListener('change', () => {
   updatePreview();
 });
 form.addEventListener('submit', saveOptions);
+addQuickLinkBtn.addEventListener('click', addQuickLink);
 
 // Theme toggle handler
 const themeToggle = document.getElementById('theme-toggle');

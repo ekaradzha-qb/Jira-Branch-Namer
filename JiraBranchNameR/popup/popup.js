@@ -9,6 +9,7 @@ const elements = {
   issueKey: document.getElementById('issue-key'),
   storyName: document.getElementById('story-name'),
   gitCommand: document.getElementById('git-command'),
+  gitCommandGroup: document.getElementById('git-command-group'),
   branchName: document.getElementById('branch-name'),
   customInput: document.getElementById('custom-input'),
   generateBtn: document.getElementById('generate-btn'),
@@ -18,7 +19,8 @@ const elements = {
   copyLinkBtn: document.getElementById('copy-link-btn'),
   jiraBoardBtn: document.getElementById('jira-board-btn'),
   myStoriesBtn: document.getElementById('my-stories-btn'),
-  optionsBtn: document.getElementById('options-btn')
+  optionsBtn: document.getElementById('options-btn'),
+  quickLinksDisplay: document.getElementById('quick-links-display')
 };
 
 // Current story URL
@@ -31,9 +33,11 @@ let options = {
   replacePrefix: false,
   customPrefix: '',
   customBranchPrefix: 'GOAT-0000',
+  hideGitCommand: false,
   hideCustomSection: false,
   jiraBoardUrl: '',
-  jiraAssigneeId: ''
+  jiraAssigneeId: '',
+  quickLinks: []
 };
 
 /**
@@ -47,19 +51,23 @@ async function loadOptions() {
       'replacePrefix',
       'customPrefix',
       'customBranchPrefix',
+      'hideGitCommand',
       'hideCustomSection',
       'jiraBoardUrl',
       'jiraAssigneeId',
-      'darkTheme'
+      'darkTheme',
+      'quickLinks'
     ]);
     options.prefixBefore = result.prefixBefore || '';
     options.prefixAfter = result.prefixAfter || '';
     options.replacePrefix = result.replacePrefix || false;
     options.customPrefix = result.customPrefix || '';
     options.customBranchPrefix = result.customBranchPrefix || 'GOAT-0000';
+    options.hideGitCommand = result.hideGitCommand === true;
     options.hideCustomSection = result.hideCustomSection === true;
     options.jiraBoardUrl = result.jiraBoardUrl || '';
     options.jiraAssigneeId = result.jiraAssigneeId || '';
+    options.quickLinks = result.quickLinks || [];
 
     // Update JIRA board button if URL is configured
     if (elements.jiraBoardBtn && options.jiraBoardUrl) {
@@ -71,6 +79,11 @@ async function loadOptions() {
     if (elements.myStoriesBtn && options.jiraBoardUrl && options.jiraAssigneeId) {
       elements.myStoriesBtn.href = `${options.jiraBoardUrl}?assignee=${options.jiraAssigneeId}`;
       elements.myStoriesBtn.classList.remove('d-none');
+    }
+
+    // Hide Git Command field if option is enabled
+    if (elements.gitCommandGroup && options.hideGitCommand) {
+      elements.gitCommandGroup.style.display = 'none';
     }
   } catch (e) {
     console.log('Using default options');
@@ -181,6 +194,60 @@ function updateGitCommand() {
   const branchNameTooltip = document.getElementById('branch-name-tooltip');
   if (gitCommandTooltip) gitCommandTooltip.textContent = gitCommand;
   if (branchNameTooltip) branchNameTooltip.textContent = branchName;
+
+  // Update quick links with new branch name
+  renderQuickLinks(branchName);
+}
+
+/**
+ * Validates if a URL is valid
+ * @param {string} url - The URL to validate
+ * @returns {boolean} True if URL is valid
+ */
+function isValidUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Renders quick links with the branch name placeholder replaced
+ * @param {string} branchName - The branch name to insert
+ */
+function renderQuickLinks(branchName) {
+  if (!elements.quickLinksDisplay || !options.quickLinks || options.quickLinks.length === 0) {
+    if (elements.quickLinksDisplay) {
+      elements.quickLinksDisplay.classList.add('d-none');
+    }
+    return;
+  }
+
+  elements.quickLinksDisplay.innerHTML = '';
+
+  options.quickLinks.forEach(link => {
+    if (!link.label || !link.url) return;
+
+    // Replace placeholder and validate URL
+    const resolvedUrl = link.url.replace(/<branch>/gi, branchName);
+    if (!isValidUrl(resolvedUrl)) return;
+
+    const linkEl = document.createElement('a');
+    linkEl.href = resolvedUrl;
+    linkEl.target = '_blank';
+    linkEl.className = 'quick-link-item';
+    linkEl.innerHTML = `<span class="quick-link-label">${link.label}:</span> <span class="quick-link-text">Link</span>`;
+    elements.quickLinksDisplay.appendChild(linkEl);
+  });
+
+  if (elements.quickLinksDisplay.children.length > 0) {
+    elements.quickLinksDisplay.classList.remove('d-none');
+  } else {
+    elements.quickLinksDisplay.classList.add('d-none');
+  }
 }
 
 
