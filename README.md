@@ -35,4 +35,4 @@ When Jira story is opened:
 
 Options:
 
-<img width="674" height="1445" alt="image" src="https://github.com/user-attachments/assets/e39e2689-084c-4eaf-a5a6-3efe8b28c1bc" />
+<img width="757" height="1355" alt="image" src="https://github.com/user-attachments/assets/fdd61d8a-b5a0-4695-ab3e-f37e33020129" />
