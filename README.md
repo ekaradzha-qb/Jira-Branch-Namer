@@ -1,6 +1,38 @@
-# Jira-Branch-Namer
-Chrome and Edge extension for Jira board that makes creating branch names breeze.
+# JiraBranchNameR
 
+Chrome and Edge extension for Jira board that makes creating branch names a breeze.
+
+## Installation
+
+### Chrome / Edge (Developer Mode)
+
+1. Download or clone this repository
+2. Open Chrome/Edge and navigate to `chrome://extensions` (or `edge://extensions`)
+3. Enable **Developer mode** (toggle in the top right corner)
+4. Click **Load unpacked**
+5. Select the `extension` folder from this repository
+6. The extension icon will appear in your browser toolbar
+
+### For Chrome Web Store Submission
+
+```bash
+cd /path/to/Jira-Branch-Namer
+zip -r jira-branch-namer.zip extension -x "*.DS_Store"
+```
+
+Upload the ZIP file to the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
+
+## Features
+
+- Automatically detects JIRA story from the current page
+- Generates clean, formatted git branch names
+- One-click copy for git commands and branch names
+- Custom branch name generator
+- Configurable prefixes and formatting options
+- Dark/Light theme support
+- Quick access links to JIRA board
+
+## Screenshots
 
 Light theme:
 

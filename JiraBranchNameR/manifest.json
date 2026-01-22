@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Jira Git branch namer",
+  "name": "JiraBranchNameR",
   "version": "1.0.0",
   "description": "Generate git branch names from JIRA stories",
   "permissions": [
