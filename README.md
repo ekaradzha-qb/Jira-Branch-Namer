@@ -2,11 +2,7 @@
 
 Chrome and Edge extension for Jira board that makes creating branch names a breeze.
 ### Automatic installation
-1. Run this in your terminal
-   ```bash
-   curl -sL https://raw.githubusercontent.com/ekaradzha-qb/Jira-Branch-Namer/main/install.sh | bash
-   ```
-## Manual Installation
+## Installation
 
 ### Chrome / Edge (Developer Mode)
 
