@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jira Git branch namer - Options</title>
+  <script src="../popup/theme-init.js"></script>
+  <link rel="stylesheet" href="../lib/bootstrap.min.css">
+  <style>
+    body {
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      color: #0052cc;
+      margin: 0;
+    }
+    .preview {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+      font-size: 13px;
+      margin-top: 20px;
+      word-break: break-all;
+    }
+    .preview-label {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-bottom: 6px;
+    }
+    .form-text {
+      font-size: 0.8rem;
+    }
+    .saved-message {
+      display: none;
+      color: #36b37e;
+      font-size: 0.9rem;
+    }
+    .saved-message.show {
+      display: inline;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0052cc;
+      margin-top: 28px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #0052cc;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .conditional-fields {
+      margin-left: 24px;
+      padding-left: 12px;
+      border-left: 2px solid #e9ecef;
+    }
+    .conditional-fields.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Dark Theme */
+    body.dark-theme,
+    html.dark-theme body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+    }
+    .dark-theme .header,
+    html.dark-theme .header {
+      border-bottom-color: #2d2d44;
+    }
+    .dark-theme .header h1,
+    html.dark-theme .header h1 {
+      color: #5c9eff;
+    }
+    .dark-theme .section-title,
+    html.dark-theme .section-title {
+      color: #5c9eff;
+      border-bottom-color: #5c9eff;
+    }
+    .dark-theme .preview,
+    html.dark-theme .preview {
+      background: #2d2d44;
+      color: #e0e0e0;
+    }
+    .dark-theme .preview-label,
+    html.dark-theme .preview-label {
+      color: #a0a0a0;
+    }
+    .dark-theme .form-control,
+    html.dark-theme .form-control {
+      background-color: #2d2d44;
+      border-color: #3d3d5c;
+      color: #e0e0e0;
+    }
+    .dark-theme .form-control::placeholder,
+    html.dark-theme .form-control::placeholder {
+      color: #9090a8;
+    }
+    .dark-theme .form-control:focus,
+    html.dark-theme .form-control:focus {
+      background-color: #2d2d44;
+      border-color: #5c9eff;
+      color: #e0e0e0;
+      box-shadow: 0 0 0 2px rgba(92, 158, 255, 0.2);
+    }
+    .dark-theme .form-text,
+    html.dark-theme .form-text {
+      color: #8c8ca0 !important;
+    }
+    .dark-theme .form-label,
+    html.dark-theme .form-label {
+      color: #c0c0c0;
+    }
+    .dark-theme .form-check-label,
+    html.dark-theme .form-check-label {
+      color: #e0e0e0;
+    }
+    .dark-theme .conditional-fields,
+    html.dark-theme .conditional-fields {
+      border-left-color: #3d3d5c;
+    }
+    .dark-theme .btn-primary,
+    html.dark-theme .btn-primary {
+      background-color: #5c9eff;
+      border-color: #5c9eff;
+    }
+    .dark-theme .btn-primary:hover,
+    html.dark-theme .btn-primary:hover {
+      background-color: #4a8ae8;
+      border-color: #4a8ae8;
+    }
+
+    /* About Footer */
+    .about-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e9ecef;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #adb5bd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+    .theme-toggle input {
+      width: 32px;
+      height: 16px;
+      appearance: none;
+      background: #ced4da;
+      border-radius: 8px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .theme-toggle input::before {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+    }
+    .theme-toggle input:checked {
+      background: #5c9eff;
+    }
+    .theme-toggle input:checked::before {
+      transform: translateX(16px);
+    }
+    .toggle-label {
+      color: #6c757d;
+    }
+    .dark-theme .about-footer,
+    html.dark-theme .about-footer {
+      border-top-color: #2d2d44;
+      color: #6c6c8a;
+    }
+    .dark-theme .theme-toggle input,
+    html.dark-theme .theme-toggle input {
+      background: #3d3d5c;
+    }
+    .dark-theme .toggle-label,
+    html.dark-theme .toggle-label {
+      color: #a0a0a0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Jira Git branch namer - Options</h1>
+  </div>
+
+  <form id="options-form">
+    <div class="section-title">Prefix Options</div>
+
+    <div class="conditional-fields" id="addition-fields">
+      <div class="mb-3">
+        <label for="prefix-before" class="form-label">Text Before Prefix</label>
+        <input type="text" class="form-control" id="prefix-before" placeholder="e.g., feature/">
+        <div class="form-text">Added before the JIRA key (e.g., "feature/" gives "feature/GOAT-8074-...")</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="prefix-after" class="form-label">Text After Prefix</label>
+        <input type="text" class="form-control" id="prefix-after" placeholder="e.g., _">
+        <div class="form-text">Added after the JIRA key (e.g., "_" gives "GOAT-8074_-...")</div>
+      </div>
+    </div>
+
+    <!-- Replace Prefix Option -->
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="replace-prefix">
+        <label class="form-check-label" for="replace-prefix">
+          <strong>Replace JIRA prefix completely</strong>
+        </label>
+      </div>
+      <div class="form-text ms-4">Use a custom string instead of the JIRA key (e.g., GOAT-8074)</div>
+    </div>
+
+    <div class="conditional-fields disabled" id="replace-fields">
+      <div class="mb-3">
+        <label for="custom-prefix" class="form-label">Custom Prefix</label>
+        <input type="text" class="form-control" id="custom-prefix" placeholder="e.g., feature/my-branch">
+        <div class="form-text">Replaces the JIRA key entirely</div>
+      </div>
+    </div>
+
+    <div class="preview-label">Preview:</div>
+    <div class="preview" id="preview">GOAT-8074-example-branch-name</div>
+
+    <div class="section-title">Custom Branch Settings</div>
+    <div class="form-text mb-3">Settings for custom branches (when not using JIRA)</div>
+
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hide-custom-section">
+        <label class="form-check-label" for="hide-custom-section">
+          <strong>Hide custom branch section in popup</strong>
+        </label>
+      </div>
+      <div class="form-text ms-4">Hide the custom branch section when a JIRA story is detected</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="custom-branch-prefix" class="form-label">Custom Branch Prefix</label>
+      <input type="text" class="form-control" id="custom-branch-prefix" placeholder="GOAT-0000">
+      <div class="form-text">Default prefix for custom branches (default: GOAT-0000)</div>
+    </div>
+
+    <div class="preview-label">Custom Branch Preview:</div>
+    <div class="preview" id="custom-preview">GOAT-0000-example-branch-name</div>
+
+    <div class="section-title">Quick Access</div>
+    <div class="form-text mb-3">Configure quick access links shown in the popup</div>
+
+    <div class="mb-3">
+      <label for="jira-board-url" class="form-label">JIRA Board URL</label>
+      <input type="text" class="form-control" id="jira-board-url" placeholder="e.g., https://yourcompany.atlassian.net/jira/software/projects/PROJ/boards/1">
+      <div class="form-text">Link to your JIRA board (shown when no story is detected)</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="jira-assignee-id" class="form-label">My Assignee ID</label>
+      <input type="text" class="form-control" id="jira-assignee-id" placeholder="e.g., 61855ee5a989710070fa789a">
+      <div class="form-text">Your JIRA assignee ID for "My Stories" button (find it in the board URL when filtering by yourself)</div>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <span class="saved-message ms-2" id="saved-message">Settings saved!</span>
+    </div>
+  </form>
+
+  <!-- About Footer -->
+  <div class="about-footer">
+    <label class="theme-toggle">
+      <input type="checkbox" id="theme-toggle">
+      <span class="toggle-label">Dark</span>
+    </label>
+    <div>by Eniz K. • v1.0.0</div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
