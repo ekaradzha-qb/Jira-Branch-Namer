@@ -107,13 +107,15 @@ echo "  3. Click 'Load unpacked'"
 echo "  4. Select: $INSTALL_DIR/JiraBranchNameR"
 echo ""
 
-# Try to open browser
+# Try to open browser and extension folder
 if [[ "$OSTYPE" == "darwin"* ]]; then
     if [[ "$BROWSER_NAME" == "Edge" ]]; then
         open -a "Microsoft Edge" "$EXTENSIONS_URL" 2>/dev/null
     else
         open -a "Google Chrome" "$EXTENSIONS_URL" 2>/dev/null
     fi
+    # Open extension folder in Finder
+    open "$INSTALL_DIR/JiraBranchNameR"
 fi
 
 echo "Done!"
